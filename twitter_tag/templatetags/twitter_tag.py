@@ -3,8 +3,10 @@ from urllib2 import URLError
 
 from django import template
 from django.core.cache import cache
+from django.utils.timesince import timesince
 from templatetag_sugar.parser import Optional, Constant, Name, Variable
 from templatetag_sugar.register import tag
+from dateutil.parser import parse
 import ttp
 import twitter
 
@@ -36,6 +38,7 @@ def get_tweets(context, username, asvar, exclude='', limit=None):
         if 'replies' in exclude and status.GetInReplyToUserId() is not None:
             continue
 
+        status.time_since = timesince(parse(status.created_at))
         status.html = tweet_parser.parse(status.GetText()).html
         tweets.append(status)
 
